@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, Match, Message, UserProfile } from '../types';
+import type { User, Match, Message, UserProfile, LikeType } from '../types';
 
 interface AppStore {
   // Current user
@@ -10,6 +10,10 @@ interface AppStore {
   cards: User[];
   setCards: (cards: User[]) => void;
   removeCard: (userId: string) => void;
+  history: User[];
+  undoLastCard: () => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
 
   // Matches
   matches: Match[];
@@ -21,9 +25,9 @@ interface AppStore {
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
 
-  // Likes
-  likedUsers: Set<string>;
-  toggleLike: (userId: string) => void;
+  // Likes with types (like, super-like, pass)
+  likedUsers: Map<string, LikeType>;
+  toggleLike: (userId: string, type: LikeType) => void;
 
   // UI
   activeTab: 'discover' | 'likes' | 'matches' | 'messages' | 'profile';
@@ -34,6 +38,17 @@ interface AppStore {
 
   showNewMatch: { show: boolean; user?: User };
   setShowNewMatch: (data: { show: boolean; user?: User }) => void;
+
+  // Theme
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+
+  // Filters
+  ageMin: number;
+  ageMax: number;
+  setAgeRange: (min: number, max: number) => void;
+  distanceMax: number;
+  setDistanceMax: (distance: number) => void;
 }
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -45,7 +60,22 @@ export const useAppStore = create<AppStore>((set) => ({
   removeCard: (userId) =>
     set((state) => ({
       cards: state.cards.filter((card) => card.id !== userId),
+      history: [...state.history, state.cards.find((c) => c.id === userId)!],
     })),
+
+  history: [],
+  undoLastCard: () =>
+    set((state) => {
+      if (state.history.length === 0) return state;
+      const lastCard = state.history[state.history.length - 1];
+      return {
+        cards: [lastCard, ...state.cards],
+        history: state.history.slice(0, -1),
+      };
+    }),
+
+  isLoading: false,
+  setIsLoading: (loading) => set({ isLoading: loading }),
 
   matches: [],
   setMatches: (matches) => set({ matches }),
@@ -61,14 +91,14 @@ export const useAppStore = create<AppStore>((set) => ({
       messages: [...state.messages, message],
     })),
 
-  likedUsers: new Set(),
-  toggleLike: (userId) =>
+  likedUsers: new Map(),
+  toggleLike: (userId, type) =>
     set((state) => {
-      const newLiked = new Set(state.likedUsers);
+      const newLiked = new Map(state.likedUsers);
       if (newLiked.has(userId)) {
         newLiked.delete(userId);
       } else {
-        newLiked.add(userId);
+        newLiked.set(userId, type);
       }
       return { likedUsers: newLiked };
     }),
@@ -81,4 +111,14 @@ export const useAppStore = create<AppStore>((set) => ({
 
   showNewMatch: { show: false },
   setShowNewMatch: (data) => set({ showNewMatch: data }),
+
+  isDarkMode: false,
+  toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
+
+  ageMin: 18,
+  ageMax: 60,
+  setAgeRange: (min, max) => set({ ageMin: min, ageMax: max }),
+
+  distanceMax: 100,
+  setDistanceMax: (distance) => set({ distanceMax: distance }),
 }));

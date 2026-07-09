@@ -10,6 +10,8 @@ export interface User {
   distance: number;
   lastSeen: string;
   zodiac?: string;
+  isOnline?: boolean;
+  responseRate?: number;
 }
 
 export interface Match {
@@ -18,6 +20,7 @@ export interface Match {
   matchedAt: string;
   lastMessage?: string;
   unreadCount: number;
+  isOnline?: boolean;
 }
 
 export interface Message {
@@ -27,10 +30,16 @@ export interface Message {
   text: string;
   timestamp: string;
   read: boolean;
+  type?: 'text' | 'image' | 'emoji';
+  status?: 'sending' | 'sent' | 'delivered' | 'read';
 }
 
 export interface UserProfile extends User {
   createdAt: string;
   likeCount: number;
   matchCount: number;
+  premium?: boolean;
+  role?: 'male' | 'female' | 'other';
 }
+
+export type LikeType = 'like' | 'super-like' | 'pass';
