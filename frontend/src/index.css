@@ -1,0 +1,84 @@
+:root {
+  --primary: #667eea;
+  --secondary: #764ba2;
+  --accent: #ff6b6b;
+  --success: #4caf50;
+  --warning: #ffa500;
+  --error: #ff6b6b;
+  --text: #1a1a1a;
+  --text-light: #666;
+  --text-lighter: #999;
+  --bg: #f5f7fa;
+  --bg-light: #fff;
+  --border: #e0e0e0;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Source Sans Pro',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  color: var(--text);
+  background: #f5f7fa;
+}
+
+button {
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimization for mobile */
+@media (max-width: 480px) {
+  body {
+    touch-action: manipulation;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
